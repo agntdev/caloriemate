@@ -1,16 +1,89 @@
 [
   {
-    "name": "/start replies with the welcome + main menu",
+    "name": "/start begins onboarding for a new user",
     "steps": [
       {
         "send": { "text": "/start" },
         "expect": [
           {
             "method": "sendMessage",
-            "payload": { "text": "👋 Welcome! Tap a button below to get started." }
+            "payload": {
+              "text": "Welcome to CalorieMate.\n\nFirst, pick your timezone so daily totals and reminders land on the right day."
+            }
           }
         ]
       }
+    ]
+  },
+  {
+    "name": "full onboarding skip profile then main menu",
+    "steps": [
+      {
+        "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "onboard:tz:UTC" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Timezone set to UTC.\n\nWant a suggested daily target from a quick profile (age, sex, height, weight)?"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "onboard:skip_profile" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Suggested daily target: 2000 kcal (default).\n\nAccept it or set your own."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "onboard:accept_target" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "You're set. Daily target: 2000 kcal.\n\nUse the menu to log meals, check today's total, or export your history."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "/start" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "CalorieMate — track meals, hit your daily target, and export your log.\n\nTap a button below to get started."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "menu:main" },
+        "expect": [{ "method": "editMessageText" }]
+      }
+    ]
+  },
+  {
+    "name": "onboarding with profile and custom target",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:America/New_York" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:profile" }, "expect": [{ "method": "sendMessage", "payload": { "text": "How old are you? Send a whole number (years)." } }] },
+      { "send": { "text": "30" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:sex:male" }, "expect": [{ "method": "sendMessage", "payload": { "text": "Height in centimeters? (e.g. 175)" } }] },
+      { "send": { "text": "180" }, "expect": [{ "method": "sendMessage", "payload": { "text": "Weight in kilograms? (e.g. 70)" } }] },
+      { "send": { "text": "80" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:custom_target" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "text": "2200" }, "expect": [{ "method": "sendMessage", "payload": { "text": "You're set. Daily target: 2200 kcal.\n\nUse the menu to log meals, check today's total, or export your history." } }] }
     ]
   }
 ]

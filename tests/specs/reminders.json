@@ -1,0 +1,89 @@
+[
+  {
+    "name": "reminders menu and timezone-local schedule",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:Asia/Tokyo" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": { "callback": "reminders:menu" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Reminders are on (Asia/Tokyo).\n\nBreakfast 08:00\nLunch 12:30\nDinner 18:30\nDaily summary 21:00\n\nTimes are in your local timezone. Tap a slot to change it."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "reminders:set:breakfast" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Send a new time for breakfast as HH:MM (24-hour), e.g. 08:30."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "07:15" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Breakfast reminder set to 07:15 (Asia/Tokyo)."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "reminders:off" },
+        "expect": [{ "method": "editMessageText" }]
+      }
+    ]
+  },
+  {
+    "name": "changing timezone after reminders keeps local times",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "reminders:set:lunch" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": { "text": "13:00" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Lunch reminder set to 13:00 (UTC)." }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "onboard:tz:Europe/London" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Timezone updated to Europe/London. Reminder times stay the same in your local clock."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "reminders:menu" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Reminders are on (Europe/London).\n\nBreakfast 08:00\nLunch 13:00\nDinner 18:30\nDaily summary 21:00\n\nTimes are in your local timezone. Tap a slot to change it."
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,19 +1,61 @@
 [
   {
-    "name": "Edit/Delete Entry",
+    "name": "Edit/Delete empty state",
     "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
       {
+        "send": { "callback": "log:edit_delete" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "No entries today to edit — log a meal first, or open Today's Log for past days."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "edit calories then delete entry",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "track:manual" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "text": "Snack" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "text": "100" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "track:manual_yes" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "log:edit_delete" }, "expect": [{ "method": "editMessageText" }] },
+      { "send": { "callback": "log:pick:e1" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "log:edit_kcal" }, "expect": [{ "method": "sendMessage", "payload": { "text": "Send the new calorie amount." } }] },
+      { "send": { "text": "150" }, "expect": [{ "method": "sendMessage", "payload": { "text": "Updated to 150 kcal." } }] },
+      { "send": { "callback": "log:edit_delete" }, "expect": [{ "method": "editMessageText" }] },
+      { "send": { "callback": "log:pick:e1" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "log:delete_ask" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": { "callback": "log:delete_yes" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Entry deleted." }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "log:pick:e1" },
         "expect": [
           {
             "method": "sendMessage",
             "payload": {
-              "text": "Modify or remove a log entry"
+              "text": "That entry is gone — it may already have been deleted. Open Edit Entry again."
             }
           }
-        ],
-        "send": {
-          "callback": "log:edit_delete"
-        }
+        ]
       }
     ]
   }

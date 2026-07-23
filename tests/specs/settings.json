@@ -1,0 +1,35 @@
+[
+  {
+    "name": "settings change daily target",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": { "callback": "settings:menu" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Settings\n\nDaily target: 2000 kcal\nTimezone: UTC\nProfile: not set"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "settings:target" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "text": "1850" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Daily target updated to 1850 kcal." }
+          }
+        ]
+      }
+    ]
+  }
+]
