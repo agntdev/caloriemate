@@ -1,0 +1,30 @@
+[
+  {
+    "name": "owner can list food database",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": { "callback": "owner:menu" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Owner tools — manage the food database, inspect logs, system settings."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "owner:foods" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "owner:settings" },
+        "expect": [{ "method": "sendMessage" }]
+      }
+    ]
+  }
+]

@@ -2,12 +2,14 @@ import { Composer } from "grammy";
 import { createBot, type BotContext, type CreateBotOptions } from "./toolkit/index.js";
 import type { StorageAdapter } from "grammy";
 
+import type { SessionData } from "./lib/session.js";
+import { resetDomainStore } from "./lib/store.js";
+import { setNow } from "./lib/clock.js";
+
 // The per-chat session shape (ephemeral conversation state only). Extend as the
 // bot grows. Durable domain data must NOT live here — use the toolkit's
 // persistent storage (see AGENTS.md).
-export interface Session {
-  // example: step?: "awaiting_amount";
-}
+export type Session = SessionData;
 
 export type Ctx = BotContext<Session>;
 
@@ -43,6 +45,13 @@ export interface BuildBotOptions {
  * build-time manifest because Workers has no filesystem.
  */
 export async function buildBot(token: string, opts: BuildBotOptions = {}) {
+  // Isolate durable memory-store between harness specs (no-op when Redis is set).
+  resetDomainStore();
+  // Deterministic "today" under vitest so dialog specs can pin date strings.
+  if (typeof process !== "undefined" && process.env.VITEST) {
+    setNow(() => Date.UTC(2026, 6, 23, 12, 0, 0)); // 2026-07-23 12:00 UTC
+  }
+
   const bot = createBot<Session>(token, {
     initial: () => ({}),
     storage: opts.storage,

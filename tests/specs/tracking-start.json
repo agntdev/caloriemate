@@ -1,19 +1,149 @@
 [
   {
-    "name": "Start Tracking",
+    "name": "Start Tracking requires setup first",
     "steps": [
       {
+        "send": { "callback": "tracking:start" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Finish setup first — tap /start to choose your timezone and daily target."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "manual entry end-to-end",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": { "callback": "tracking:start" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "How do you want to log this meal?\n\nManual — type a food name and calories\nDatabase — pick from common foods\nPhoto — send a meal photo for an experimental estimate"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "track:manual" },
         "expect": [
           {
             "method": "sendMessage",
             "payload": {
-              "text": "Begin calorie tracking process"
+              "text": "What's the food called? You can also send just a calorie number (e.g. 350)."
             }
           }
-        ],
-        "send": {
-          "callback": "tracking:start"
-        }
+        ]
+      },
+      {
+        "send": { "text": "Oatmeal" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "How many calories for \"Oatmeal\"?" }
+          }
+        ]
+      },
+      {
+        "send": { "text": "300" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Log Oatmeal — 300 kcal?" }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "track:manual_yes" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Saved: Oatmeal — 300 kcal.\nOpen Today's Log to see your running total."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "database entry end-to-end",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "tracking:start" }, "expect": [{ "method": "editMessageText" }] },
+      { "send": { "callback": "track:db" }, "expect": [{ "method": "editMessageText" }] },
+      {
+        "send": { "callback": "track:db_pick:banana" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Banana — 105 kcal per 1 medium.\nHow many portions?"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "track:db_qty:2" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Log 2× Banana (1 medium) — 210 kcal?"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "track:db_yes" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Saved: 2× Banana — 210 kcal."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "quick calorie-only manual entry",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "track:manual" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": { "text": "450" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Log Quick entry — 450 kcal?" }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "track:cancel" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Entry cancelled." }
+          }
+        ]
       }
     ]
   }

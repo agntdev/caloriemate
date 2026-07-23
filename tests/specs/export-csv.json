@@ -1,19 +1,44 @@
 [
   {
-    "name": "Export Logs (CSV)",
+    "name": "Export CSV empty state",
     "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
       {
+        "send": { "callback": "export:csv" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "No logs to export yet — track a meal first, then come back for your CSV."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Export CSV with sample data",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "track:manual" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "text": "Eggs" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "text": "180" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "track:manual_yes" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": { "callback": "export:csv" },
         "expect": [
           {
             "method": "sendMessage",
-            "payload": {
-              "text": "Request CSV export of calorie logs"
-            }
-          }
-        ],
-        "send": {
-          "callback": "export:csv"
-        }
+            "payload": { "text": "Export ready — 1 entry." }
+          },
+          { "method": "sendDocument" }
+        ]
       }
     ]
   }

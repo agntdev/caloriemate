@@ -8,7 +8,7 @@
           {
             "method": "sendMessage",
             "payload": {
-              "text": "ℹ️ Tap /start to open the menu, then pick what you want from the buttons.\n\nEverything in this bot is reachable by tapping — you don't need to remember any commands."
+              "text": "CalorieMate helps you track daily calories.\n\n• Start Tracking — log a meal (manual, food database, or photo)\n• Today's Log — see what you've eaten and what's left\n• Edit Entry — change or remove a log line\n• Export CSV — download your history\n• Reminders — meal prompts and a daily summary\n• Settings — target, timezone, profile\n\nTap /start anytime to open the menu. Send a meal photo for an experimental estimate."
             }
           }
         ]

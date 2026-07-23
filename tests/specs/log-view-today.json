@@ -1,19 +1,45 @@
 [
   {
-    "name": "View Today's Log",
+    "name": "View Today's Log empty state after setup",
     "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
       {
+        "send": { "callback": "log:view_today" },
         "expect": [
           {
-            "method": "sendMessage",
+            "method": "editMessageText",
             "payload": {
-              "text": "Show today's calorie entries"
+              "text": "Log for 2026-07-23\nTarget 2000 kcal · eaten 0 kcal · left 2000 kcal\n\nNo entries yet — tap Start Tracking to add one."
             }
           }
-        ],
-        "send": {
-          "callback": "log:view_today"
-        }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Today's log shows saved manual entry",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "track:manual" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "text": "Rice" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "text": "250" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "track:manual_yes" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": { "callback": "log:view_today" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Log for 2026-07-23\nTarget 2000 kcal · eaten 250 kcal · left 1750 kcal\n\n1. Rice — 250 kcal"
+            }
+          }
+        ]
       }
     ]
   }

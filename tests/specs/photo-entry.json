@@ -1,0 +1,115 @@
+[
+  {
+    "name": "photo entry estimate confirm end-to-end",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": {
+          "update": {
+            "update_id": 50,
+            "message": {
+              "message_id": 50,
+              "date": 0,
+              "chat": { "id": 1, "type": "private", "first_name": "Test" },
+              "from": { "id": 1, "is_bot": false, "first_name": "Test" },
+              "photo": [
+                {
+                  "file_id": "photo-file-1",
+                  "file_unique_id": "uniq1",
+                  "width": 100,
+                  "height": 100
+                }
+              ]
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Estimating calories from your photo…" }
+          },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Experimental estimate: 500 kcal (experimental default — adjust if needed).\n\nConfirm, adjust the number, or cancel."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "photo:confirm" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Saved photo entry: Meal photo — 500 kcal."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "photo adjust amount then confirm",
+    "steps": [
+      { "send": { "text": "/start" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:tz:UTC" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:skip_profile" }, "expect": [{ "method": "sendMessage" }] },
+      { "send": { "callback": "onboard:accept_target" }, "expect": [{ "method": "sendMessage" }] },
+      {
+        "send": {
+          "update": {
+            "update_id": 60,
+            "message": {
+              "message_id": 60,
+              "date": 0,
+              "chat": { "id": 1, "type": "private", "first_name": "Test" },
+              "from": { "id": 1, "is_bot": false, "first_name": "Test" },
+              "photo": [
+                {
+                  "file_id": "photo-file-2",
+                  "file_unique_id": "uniq2",
+                  "width": 90,
+                  "height": 90
+                }
+              ]
+            }
+          }
+        },
+        "expect": [{ "method": "sendMessage" }, { "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "photo:adjust" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Send the correct calorie amount as a number." }
+          }
+        ]
+      },
+      {
+        "send": { "text": "620" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Use 620 kcal for this photo?" }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "photo:confirm" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Saved photo entry: Meal photo — 620 kcal."
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
